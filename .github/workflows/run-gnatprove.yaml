@@ -1,0 +1,23 @@
+name: Run GNATprove
+
+on: workflow_dispatch
+
+jobs:
+  run-gnatprove:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/fedora/fedora:40-x86_64
+    steps:
+      - name: Setup COPR repository
+        run: |
+          dnf install -y dnf-plugins-core
+          dnf copr enable -y dvraaij/ada
+
+      - name: Setup SPARK 2014
+        run: dnf install -y spark2014 sparklib
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Run gnatprove
+        run: gnatprove --report=all -P spark_swap.gpr
